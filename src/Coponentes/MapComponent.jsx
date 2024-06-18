@@ -19,27 +19,43 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapComponent = () => {
     const [positions, setPositions] = useState([
-        { latitud: 51.505, longitud: -0.09 },
-        { latitud: 51.51, longitud: -0.1 },
-        { latitud: 51.51, longitud: -0.08 }
+        { latitud: 21.913456439561106, longitud: -102.31692698970566 },
+        { latitud: 21.877062744222176, longitud: -102.30173232412855 },
+        { latitud: 21.79458755788709, longitud: -102.37002223243829 }
     ]);
+
+    // {
+    //     "longitud": "-102.31692698970566",
+    //     "latitud": "21.913456439561106"
+    //   },
+    //   {
+    //     "longitud": "-102.30173232412855",
+    //     "latitud": "21.877062744222176"
+    //   },
+    //   {
+    //     "longitud": "-102.37002223243829",
+    //     "latitud": "21.79458755788709"
+    //   }
+    
 
     useEffect(() => {
         const fetchPositions = async () => {
             try {
-                const response = await axios.get('https://api-proxy-ie.onrender.com/location/get_all');
-                console.log('response:', response.data);
-                if (response.data?.length == 0 || response.data?.length == undefined || response.data?.length == null || !response.data) {
+                const response = await axios.get('http://localhost:3000/location/get_all');
+                var locations = response.data.data;
+                console.log('locations:', locations);
+                console.log('locations.length', locations.length);
+                if (locations.length == 0 || locations.length == undefined || locations.length == null || !locations) {
                     return console.log('No data found');
                 } else {
-                    setPositions(response.data);
+                    setPositions(locations);
                 }
 
             } catch (error) {
                 console.error('Error fetching positions:', error);
             }
         };
-
+        setInterval(fetchPositions, 60000);
         fetchPositions();
     }, []);
 
@@ -49,12 +65,12 @@ const MapComponent = () => {
                 <h1>UBICACIÓN EN EL MAPA</h1>
             </div>
 
-            <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100vh", width: "100%" }}>
+            <MapContainer center={[21.913456439561106, -102.31692698970566]} zoom={13} style={{ height: "100vh", width: "100%" }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
-                {positions?.map((position, index) => (
+                {positions&&positions?.map&&positions.map((position, index) => (
                     <Marker key={index} position={[position.latitud, position.longitud]}>
                         <Popup>
                             A pretty CSS3 popup. <br /> Easily customizable.
